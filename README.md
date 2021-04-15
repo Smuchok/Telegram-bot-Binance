@@ -2,7 +2,12 @@
 Telegram Bot by Python (pyTelegramBotAPI). 
 
 ## Бібліотеки
-pyTelegramBotAPI, python-binance, 
+pyTelegramBotAPI
+python-binance
+requests
+os
+re
+time
 
 ## Вигляд /binance_shower_bot/secure/tokens.py
 ```def TOKEN_TELEGRAM():
