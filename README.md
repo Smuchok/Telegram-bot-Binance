@@ -9,7 +9,8 @@ os,
 re, 
 time
 
-## Вигляд `/binance_shower_bot/secure/tokens.py`:
+## TOKENs:
+Потрібно вставити токени в файл `/binance_shower_bot/secure/tokens.py`:
 ```python
 def TOKEN_TELEGRAM():
     return 'TOKEN telegram-bot-api'
