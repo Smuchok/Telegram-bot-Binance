@@ -9,7 +9,7 @@ os,
 re, 
 time
 
-## Вигляд `/binance_shower_bot/secure/tokens.py` :
+## Вигляд `/binance_shower_bot/secure/tokens.py`:
 ```python
 def TOKEN_TELEGRAM():
     return 'TOKEN telegram-bot-api'
