@@ -67,7 +67,7 @@ class Binance_view():
 {'msg': 'normal', 'status': 0}
 
 # client.get_symbol_info('BNBBTC')
-{
+test= {
     'symbol': 'BNBBTC', 
     'status': 'TRADING', 
     'baseAsset': 'BNB', 
