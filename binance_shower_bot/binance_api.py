@@ -23,15 +23,57 @@ client = Client(API_KEY, API_SECRET)
 # info = client.get_symbol_info('BNBBTC')
 # print(info)
 
-class Binance_view():
-    symbols= [
+def open_txt(file, path=''):
+    f_path= str(path) + str(file)
+    print('f_path binance api', f_path)
+    f= open(f_path)
+    lines= f.readlines()
+
+    lines_edited= []
+    for i in lines:
+        lines_edited.append( i[:len(i)-1] )
+
+    print(lines_edited)
+    f.close()
+    return lines_edited
+
+symbols_clear= open_txt('symbols.txt', path='binance_shower_bot/secure/') # --> ['BTC', 'ADA', 'XRP', 'NEO', 'EOS', 'IOTA', 'DOGE']
+
+def make_symbols(symbols_clear):
+    symbols= []
+    for i in symbols_clear:
+        set_symbols= []
+        add= ['USDT', 'UAH', 'RUB']
+        for n in add:
+            set_symbols.append(i + n)
+        
+        symbols.append(set_symbols)
+
+    # print(symbols)
+    return symbols
+
+SYMBOLS= [
         ['BTCUSDT', 'BTCUAH', 'BTCRUB'],
         ['ADAUSDT', 'ADAUAH', 'ADARUB'],
         ['XRPUSDT', 'XRPUAH', 'XRPRUB'],
         ['NEOUSDT', 'NEOUAH', 'NEORUB'],
         ['EOSUSDT', 'EOSUAH', 'EOSRUB'],
-        ['IOTAUSDT', 'IOTAUAH', 'IOTARUB']
+        ['IOTAUSDT', 'IOTAUAH', 'IOTARUB'],
+        ['DOGEUSDT', 'DOGEUAH', 'DOGERUB']
     ]
+
+class Binance_view():
+
+    SYMBOLS= make_symbols(symbols_clear)
+    symbols= SYMBOLS
+
+    def take_symbol(symbol):
+        symbols_clear= []
+        symbols_clear.append(symbol)
+        # symbols_clear.append('BTC')
+        symbols= make_symbols(symbols_clear)
+        # print('take_symbol:', symbols)
+        return symbols
 
     def view_prices(symbols=symbols):
         
