@@ -21,15 +21,32 @@ class make_btn():
         markup.add(itembtn1)
         return markup
 
+helptext= '''
+Я вмію:
+1. Показати ціни на найпопулярніші криптовалюти.
+Натисни на кнопку, або напиши "Ціни на крипту", або "/price".
+    
+2. Показати ціни на якус конктретну криптовалюту.
+Наприклад, напиши: "btc", "xrp" або "doge".
 
-@bot.message_handler(commands=['start', 'help'])
+3. Ще тут є рандомайзер.
+Напиши: "Рандом 1 10" і скажу рандомне число від 1 до 10.
+'''
+
+
+@bot.message_handler(commands=['start'])
 def welcome(message):
     markup= make_btn.checkprices()
-    bot.reply_to(message, f'Привєт пострижися, {message.from_user.first_name}', reply_markup=markup)
+    bot.reply_to(message, f'Хай, як сі маєш?, {message.from_user.first_name}', reply_markup=markup)
+    bot.reply_to(message, helptext, reply_markup=markup)
 
-# @bot.message_handler(commands=['check'])
-# def welcome(message):
-#     bot.reply_to(message, f'Привєт пострижися, {message.from_user.first_name}')
+@bot.message_handler(commands=['help'])
+def helpcommand(message):
+    markup= make_btn.checkprices()
+    answer= helptext
+    bot.reply_to(message, helptext, reply_markup=markup)
+
+
 
 def log_to_txt(log, file, path=''):
     f_path= str(path) + str(file)
@@ -63,6 +80,9 @@ def get_prices(message, user_id=None, symbols=None):
         # print('is else', result)
     
     prices= result['result']
+    if result['is_empty']:
+        return False
+
     if user_id==None:
         user_id= message.from_user.id
 
@@ -107,7 +127,7 @@ def get_text_messages(message):
 
     if re_search_in_arr(text, hello_words):
         bot.send_message(user_id, 'Привіт!', reply_markup=markup)
-    elif text == 'Ціни на крипту':
+    elif text == 'Ціни на крипту' or text == '/price':
         bot.send_message(user_id, 'Секунду...')
         bot.send_message(user_id, get_prices(message), reply_markup=markup)
     elif text == 'status':
@@ -134,13 +154,18 @@ def get_text_messages(message):
 
     elif make_symbols_local(text):
         sym= make_symbols_local(text)
-        bot.send_message(user_id, sym)
-        bot.send_message(user_id, get_prices(message, symbols=sym), reply_markup=markup)
+        answer= get_prices(message, symbols=sym)
+        if answer==False:
+            bot.send_message(user_id, 'Такої крипти не знайшов\nДавай заново або напиши "/help"', reply_markup=markup)
+        else:
+            bot.send_message(user_id, answer, reply_markup=markup)
+    
+    
+    
     else:
-        bot.send_message(user_id, 'Я не поняв. Давай заново')
+        bot.send_message(user_id, 'Я не поняв. Давай заново або напиши "/help"')
         bot.send_message(user_id, 'но на всяк...')
-        bot.send_message(user_id, get_prices
-    (message), reply_markup=markup)
+        bot.send_message(user_id, get_prices(message), reply_markup=markup)
 
 
 

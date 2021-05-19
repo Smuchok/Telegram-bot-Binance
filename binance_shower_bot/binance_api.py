@@ -93,11 +93,16 @@ class Binance_view():
                         # arr2.append({'symbol':j, 'price':'not found'})
                         pass
                 arr.append(arr2)
-            arr_end= {'status':True , 'result':arr}
+            arr_end= {'status':True , 'result':arr, 'is_empty':False}
+            print('in binance_api: ', arr_end['result'])
+            print('in binance_api: is result empty: ', arr_end['result'] == [[]])
+            if arr_end['result']==[[]]:
+                arr_end= {'status':False , 'result':arr, 'is_empty':True}
+
             return arr_end
         except requests.exceptions.ReadTimeout:
             print(' - - - ReadTimeout error - - -')
-            return {'status':False , 'result':None}
+            return {'status':False , 'result':None, 'is_empty':False}
 
 
 # Binance_view.view_prices
