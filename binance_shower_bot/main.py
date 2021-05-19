@@ -1,9 +1,11 @@
 import telebot
 from telebot import types
+import telegram
 import os
 # import json
 import re
 import time
+import random
 
 from secure.tokens import TOKEN_TELEGRAM
 from binance_api import Binance_view as B_view
@@ -51,9 +53,14 @@ def log_messages(message):
 # def send_mes(user_id, str):
 #     return bot.send_message(user_id, str)
 
-def prices_view(message, user_id=None):
-    result= B_view.view_prices()
-    # print(result)
+def get_prices(message, user_id=None, symbols=None):
+    if symbols==None:
+        result= B_view.view_prices()
+        # print(result)
+        # print('is not else', result)
+    else:
+        result= B_view.view_prices(symbols=symbols)
+        # print('is else', result)
     
     prices= result['result']
     if user_id==None:
@@ -69,7 +76,7 @@ def prices_view(message, user_id=None):
         bot.send_message(user_id, sms_return)
     else:
         print(user_id, 'api.binance.com не відповідає.\nЗанадто багато запитів за раз')
-        bot.send_message(user_id, 'api.binance.com не відповідає.\nЗанадто багато запитів за раз')
+        bot.send_message(user_id, 'api.binance.com не відповідає')
         time.sleep(5)
 
 @bot.message_handler(content_types=['text'])
@@ -88,6 +95,11 @@ def get_text_messages(message):
                 return True
         return False
 
+    def make_symbols_local(text):
+        symbols= B_view.take_symbol(text.upper())
+        print('in main', symbols)
+        return symbols
+
 
     markup= make_btn.checkprices()  # Клава
 
@@ -97,12 +109,38 @@ def get_text_messages(message):
         bot.send_message(user_id, 'Привіт!', reply_markup=markup)
     elif text == 'Ціни на крипту':
         bot.send_message(user_id, 'Секунду...')
-        bot.send_message(user_id, prices_view(message), reply_markup=markup)
+        bot.send_message(user_id, get_prices(message), reply_markup=markup)
+    elif text == 'status':
+        a= bot.get_updates()
+        print('get_updates', a)
+        b= bot.get_me()
+        print('get_me', b)
+
+    # Рандомайзер
+    elif ('random' in text.lower()) or ('рандом' in text.lower()):
+        ab= text.lower().split(' ')
+        print('random', ab)
+        try:
+            a, b = ab[1], ab[2]
+            if a.isdigit() and b.isdigit() and (int(a)<int(b)):
+                res= random.randint(int(a), int(b))
+                bot.send_message(user_id, f'Рандомне число між {a} та {b}:')
+                bot.send_message(user_id, res, reply_markup=markup)
+                print('answer: ', res)
+            else:
+                bot.send_message(user_id, 'Введіть коректно. Приклади:\nrandom 1 10\nрандом 22 100', reply_markup=markup)
+        except IndexError:
+            bot.send_message(user_id, 'Введіть коректно. Приклади:\nrandom 1 10\nрандом 22 100', reply_markup=markup)
+
+    elif make_symbols_local(text):
+        sym= make_symbols_local(text)
+        bot.send_message(user_id, sym)
+        bot.send_message(user_id, get_prices(message, symbols=sym), reply_markup=markup)
     else:
         bot.send_message(user_id, 'Я не поняв. Давай заново')
         bot.send_message(user_id, 'но на всяк...')
-        bot.send_message(user_id, prices_view(message), reply_markup=markup)
-print
+        bot.send_message(user_id, get_prices
+    (message), reply_markup=markup)
 
 
 
@@ -206,3 +244,100 @@ test= {
         'text': 'gdfg'
         }
 }
+test_bohdan= {
+    'content_type': 'text', 
+    'id': 225, 
+    'message_id': 225, 
+    'from_user': {
+        'id': 805037677, 
+        'is_bot': False, 
+        'first_name': 'Bohdan', 
+        'username': 'Easyk3', 
+        'last_name': None, 
+        'language_code': 'uk', 
+        'can_join_groups': None, 
+        'can_read_all_group_messages': None, 
+        'supports_inline_queries': None
+        }, 
+    'date': 1618062480, 
+    'chat': {
+        'id': 805037677, 
+        'type': 'private', 
+        'title': None, 
+        'username': 'Easyk3', 
+        'first_name': 'Bohdan', 
+        'last_name': None, 
+        'photo': None, 
+        'bio': None, 
+        'description': None, 
+        'invite_link': None, 
+        'pinned_message': None, 
+        'permissions': None, 
+        'slow_mode_delay': None, 
+        'sticker_set_name': None, 
+        'can_set_sticker_set': None, 
+        'linked_chat_id': None, 
+        'location': None
+        }, 
+    'forward_from': None, 
+    'forward_from_chat': None, 
+    'forward_from_message_id': None, 
+    'forward_signature': None, 
+    'forward_sender_name': None, 
+    'forward_date': None, 
+    'reply_to_message': None, 
+    'edit_date': None, 
+    'media_group_id': None, 
+    'author_signature': None, 
+    'text': 'Ти є сам пдр', 
+    'entities': None, 
+    'caption_entities': None, 
+    'audio': None, 
+    'document': None, 
+    'photo': None, 
+    'sticker': None, 
+    'video': None, 
+    'video_note': None, 
+    'voice': None, 
+    'caption': None, 
+    'contact': None, 
+    'location': None, 
+    'venue': None, 
+    'animation': None, 
+    'dice': None, 
+    'new_chat_member': None, 
+    'new_chat_members': None, 
+    'left_chat_member': None, 
+    'new_chat_title': None, 
+    'new_chat_photo': None, 
+    'delete_chat_photo': None, 
+    'group_chat_created': None, 
+    'supergroup_chat_created': None, 
+    'channel_chat_created': None, 
+    'migrate_to_chat_id': None, 
+    'migrate_from_chat_id': None, 
+    'pinned_message': None, 
+    'invoice': None, 
+    'successful_payment': None, 
+    'connected_website': None, 
+    'reply_markup': None, 
+    'json': {
+        'message_id': 225, 
+        'from': {
+            'id': 805037677, 
+            'is_bot': False, 
+            'first_name': 'Bohdan', 
+            'username': 'Easyk3', 
+            'language_code': 'uk'
+            }, 
+        'chat': {
+            'id': 805037677, 
+            'first_name': 'Bohdan', 
+            'username': 'Easyk3', 
+            'type': 'private'
+            }, 
+        'date': 1618062480, 
+        'text': 'Ти є сам пдр'
+        }
+    }
+# print(test['json']['text'])
